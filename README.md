@@ -6,7 +6,7 @@
 
 # 🚀 Features:
 ## Upload your own CSV file or Just Manualy Compare two users
-###
+### ![upload](https://github.com/Akshita2711/StartSolutions/blob/be2c82a1d00ef849f870f18cc1efb568214b3b3e/images/uplaod.png)
 
 ## ML models: Logistic Regression, Random Forest, XGBoost
 
