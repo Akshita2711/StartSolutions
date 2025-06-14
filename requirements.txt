@@ -5,6 +5,5 @@ seaborn
 streamlit
 scikit-learn
 shap
-warnings
 os
 joblib
