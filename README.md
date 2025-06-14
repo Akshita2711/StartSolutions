@@ -8,17 +8,20 @@
 ## Upload your own CSV file or Just Manualy Compare two users
 ### ![upload](https://github.com/Akshita2711/StartSolutions/blob/be2c82a1d00ef849f870f18cc1efb568214b3b3e/images/uplaod.png)
 
-## ML models: Logistic Regression, Random Forest, XGBoost
+## Data overview
+### ![Data overview](https://github.com/Akshita2711/StartSolutions/blob/be2d234b6ad18837fcf6ba5d217142a4bf7a6d70/images/data%20overview.png)
 
-## PCA for dimensionality reduction
-
-## SHAP for feature importance
-
-## Predict churn for single or multiple customers
+## Prediction Results 
+### ![Prediction](https://github.com/Akshita2711/StartSolutions/blob/be2d234b6ad18837fcf6ba5d217142a4bf7a6d70/images/Prediction.png)
 
 ## Smart suggestions for customer retention
+### ![Suggestion](https://github.com/Akshita2711/StartSolutions/blob/be2d234b6ad18837fcf6ba5d217142a4bf7a6d70/images/suggestions.png)
 
-## Visual insights: churn distribution, ROC curves
+## Churn Probability Histogram
+###
+
+## Dark Mode
+
 
 # 🛠 Tech Stack
 
