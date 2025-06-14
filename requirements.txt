@@ -5,5 +5,4 @@ seaborn
 streamlit
 scikit-learn
 shap
-os
 joblib
