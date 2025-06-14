@@ -62,20 +62,6 @@ feature_cols = cols_to_encode + ['tenure', 'MonthlyCharges', 'TotalCharges']
 X = df[feature_cols]
 y = df['churned']
 
-def compare_customers(data1, data2, model):
-    score1 = model.predict([data1])[0]
-    score2 = model.predict([data2])[0]
-
-    if score1 > score2:
-        result = "Customer 1 needs more attention"
-    elif score2 > score1:
-        result = "Customer 2 needs more attention"
-    else:
-        result = "Both customers are equally important"
-
-    return score1, score2, result
-
-
 # ======== 6. Standardize the Features ========
 print("📏 Standardizing features...")
 scaler = StandardScaler()
@@ -359,6 +345,57 @@ def preprocess_and_predict(data):
     probabilities = model.predict_proba(X_scaled)[:, 1]
     return predictions, probabilities
 
+# New: Manual user comparison interface
+with st.expander("🔍 Compare Two Customers Manually"):
+    st.markdown("Fill the details for both users to compare their churn risk and suggested engagement strategy.")
+    user_inputs = []
+    for i in range(2):
+        st.markdown(f"*User {i+1}*")
+        inputs = {}
+        for col in feature_cols:
+            if col in ['tenure', 'MonthlyCharges', 'TotalCharges']:
+                inputs[col] = st.number_input(f"{col} (User {i+1})", key=f"{col}_{i}")
+            else:
+                options = ['Yes', 'No'] if col not in ['gender', 'Contract', 'InternetService', 'PaymentMethod'] else []
+                if col == 'gender': options = ['Male', 'Female']
+                if col == 'Contract': options = ['Month-to-month', 'One year', 'Two year']
+                if col == 'InternetService': options = ['DSL', 'Fiber optic', 'No']
+                if col == 'PaymentMethod': options = ['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)']
+                inputs[col] = st.selectbox(f"{col} (User {i+1})", options, key=f"{col}_{i}")
+        user_inputs.append(inputs)
+
+    if st.button("🔍 Compare Users"):
+        df_users = pd.DataFrame(user_inputs)
+        for col in feature_cols:
+            if df_users[col].dtype == 'object':
+                df_users[col] = le.fit_transform(df_users[col])
+        df_users_scaled = scaler.transform(df_users[feature_cols])
+        churn_probs = model.predict_proba(df_users_scaled)[:, 1]
+        st.success(f"User 1 churn probability: {churn_probs[0]:.2f}")
+        st.success(f"User 2 churn probability: {churn_probs[1]:.2f}")
+
+        if churn_probs[0] > churn_probs[1]:
+            attention = "User 1 needs more attention."
+        elif churn_probs[1] > churn_probs[0]:
+            attention = "User 2 needs more attention."
+        else:
+            attention = "Both users have equal churn risk."
+
+        st.markdown(f"### 🔔 {attention}")
+
+        def action(prob):
+            if prob > 0.9:
+                return "📝 Send feedback form"
+            elif prob > 0.75:
+                return "💸 Offer cashback or discount"
+            elif prob > 0.5:
+                return "🎁 Provide loyalty reward"
+            else:
+                return "✅ Maintain current engagement"
+
+        st.markdown(f"*Suggested Plan for User 1:* {action(churn_probs[0])}")
+        st.markdown(f"*Suggested Plan for User 2:* {action(churn_probs[1])}")
+
 # Main UI
 if uploaded_file:
     st.subheader("🔍 Uploaded Data Preview")
@@ -397,30 +434,6 @@ if uploaded_file:
         else:
             st.warning("⚠ Smart suggestions not available — missing required columns like 'tenure' or 'MonthlyCharges' in uploaded data.")
 
-
-
-        st.header("📊 Compare Two Customers")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.subheader("Customer 1")
-            c1_feature1 = st.number_input("Feature 1", key="c1f1")
-            c1_feature2 = st.number_input("Feature 2", key="c1f2")
-        
-        with col2:
-            st.subheader("Customer 2")
-            c2_feature1 = st.number_input("Feature 1", key="c2f1")
-            c2_feature2 = st.number_input("Feature 2", key="c2f2")
-        if st.button("Compare Customers"):
-            customer1_data = [c1_feature1, c1_feature2]  # Add all features
-            customer2_data = [c2_feature1, c2_feature2]
-
-            score1, score2, result = compare_customers(customer1_data, customer2_data, model)
-
-            st.success(f"Customer 1 Score: {score1}")
-            st.success(f"Customer 2 Score: {score2}")
-            st.info(result)
-
-
         # Churn Probability Distribution
         st.subheader("🌈 Churn Probability Distribution")
         fig, ax = plt.subplots(figsize=(8, 4))
@@ -445,5 +458,54 @@ if uploaded_file:
             ax2.legend()
             ax2.tick_params(colors='gray')
             st.pyplot(fig2)
+
 else:
     st.info("📂 Please upload a test CSV file from the sidebar to start.")
+
+    st.markdown("---")
+    st.subheader("👥 Compare Two Customers Manually")
+
+    with st.form("compare_customers_form"):
+        st.markdown("### 🧍‍♂ Customer 1")
+        c1_data = {}
+        for col in feature_cols:
+            if col in ['tenure', 'MonthlyCharges', 'TotalCharges']:
+                c1_data[col] = st.number_input(f"Customer 1 - {col}", min_value=0.0)
+            else:
+                c1_data[col] = st.selectbox(f"Customer 1 - {col}", options=['Yes', 'No', 'Male', 'Female', 'Month-to-month', 'One year', 'Two year',
+                                                                              'DSL', 'Fiber optic', 'No', 'Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'],
+                                            key=f"c1_{col}")
+
+        st.markdown("### 🧍‍♀ Customer 2")
+        c2_data = {}
+        for col in feature_cols:
+            if col in ['tenure', 'MonthlyCharges', 'TotalCharges']:
+                c2_data[col] = st.number_input(f"Customer 2 - {col}", min_value=0.0, key=f"c2_{col}")
+            else:
+                c2_data[col] = st.selectbox(f"Customer 2 - {col}", options=['Yes', 'No', 'Male', 'Female', 'Month-to-month', 'One year', 'Two year',
+                                                                              'DSL', 'Fiber optic', 'No', 'Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)'],
+                                            key=f"c2_{col}")
+
+        submitted = st.form_submit_button("🔍 Compare and Recommend")
+
+    if submitted:
+        df_compare = pd.DataFrame([c1_data, c2_data])
+        preds, probs = preprocess_and_predict(df_compare)
+
+        df_compare["Churn Probability"] = probs
+        df_compare["Suggested Action"] = df_compare.apply(lambda row: (
+            "💸 Offer cashback" if row["tenure"] < 1 else
+            "🎁 Free trial" if row["tenure"] < 3 else
+            "📝 Collect feedback" if row["Churn Probability"] > 0.9 else
+            "📞 Send engagement email"
+        ), axis=1)
+
+        st.subheader("🧾 Results")
+        st.dataframe(df_compare[["Churn Probability", "Suggested Action"]])
+
+        if probs[0] > probs[1]:
+            st.markdown(f"🎯 *Customer 1 has a higher churn risk ({probs[0]:.2f}) — Prioritize them.*")
+        elif probs[1] > probs[0]:
+            st.markdown(f"🎯 *Customer 2 has a higher churn risk ({probs[1]:.2f}) — Prioritize them.*")
+        else:
+            st.markdown("✅ Both customers have equal churn risk.")
