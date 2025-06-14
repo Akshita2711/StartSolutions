@@ -62,6 +62,20 @@ feature_cols = cols_to_encode + ['tenure', 'MonthlyCharges', 'TotalCharges']
 X = df[feature_cols]
 y = df['churned']
 
+def compare_customers(data1, data2, model):
+    score1 = model.predict([data1])[0]
+    score2 = model.predict([data2])[0]
+
+    if score1 > score2:
+        result = "Customer 1 needs more attention"
+    elif score2 > score1:
+        result = "Customer 2 needs more attention"
+    else:
+        result = "Both customers are equally important"
+
+    return score1, score2, result
+
+
 # ======== 6. Standardize the Features ========
 print("📏 Standardizing features...")
 scaler = StandardScaler()
@@ -382,6 +396,30 @@ if uploaded_file:
 
         else:
             st.warning("⚠ Smart suggestions not available — missing required columns like 'tenure' or 'MonthlyCharges' in uploaded data.")
+
+
+
+        st.header("📊 Compare Two Customers")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("Customer 1")
+            c1_feature1 = st.number_input("Feature 1", key="c1f1")
+            c1_feature2 = st.number_input("Feature 2", key="c1f2")
+        
+        with col2:
+            st.subheader("Customer 2")
+            c2_feature1 = st.number_input("Feature 1", key="c2f1")
+            c2_feature2 = st.number_input("Feature 2", key="c2f2")
+        if st.button("Compare Customers"):
+            customer1_data = [c1_feature1, c1_feature2]  # Add all features
+            customer2_data = [c2_feature1, c2_feature2]
+
+            score1, score2, result = compare_customers(customer1_data, customer2_data, model)
+
+            st.success(f"Customer 1 Score: {score1}")
+            st.success(f"Customer 2 Score: {score2}")
+            st.info(result)
+
 
         # Churn Probability Distribution
         st.subheader("🌈 Churn Probability Distribution")
