@@ -260,6 +260,44 @@ st.markdown(
     "<h1 style='text-align: center; color: #7a5195;'>📊 Customer Churn Prediction Dashboard</h1><br>",
     unsafe_allow_html=True
 )
+# Theme Toggle in Sidebar
+theme_mode = st.sidebar.radio("🌓 Select Theme", ["Light", "Dark"])
+
+# Set background and text colors based on theme
+if theme_mode == "Dark":
+    st.markdown(
+        """
+        <style>
+            body {
+                background-color: #1e1e1e;
+                color: white;
+            }
+            .stApp {
+                background-color: #1e1e1e;
+            }
+            .css-1d391kg, .css-ffhzg2, .css-1v3fvcr {
+                background-color: #1e1e1e !important;
+                color: white !important;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.markdown(
+        """
+        <style>
+            body {
+                background-color: white;
+                color: black;
+            }
+            .stApp {
+                background-color: white;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
 # Sidebar for file upload
 st.sidebar.header("📤 Upload Your Data")
