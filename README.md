@@ -2,7 +2,7 @@
 ## An interactive Streamlit dashboard that predicts customer churn using machine learning models like Logistic Regression, Random Forest, and XGBoost. It helps businesses identify high-risk customers and take proactive retention actions.
 
 # 🌐 Live Demo
-## 👉 Try the App Here https://startsolutions.streamlit.app/
+#👉 Try the App Here https://startsolutions.streamlit.app/
 
 # 🚀 Features:
 ## Upload your own CSV file or Just Manualy Compare two users
