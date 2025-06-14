@@ -18,7 +18,7 @@
 ### ![Suggestion](https://github.com/Akshita2711/StartSolutions/blob/be2d234b6ad18837fcf6ba5d217142a4bf7a6d70/images/suggestions.png)
 
 ## Churn Probability Histogram
-###
+### ![Histogram](https://github.com/Akshita2711/StartSolutions/blob/4d751a94740e3244a0c98ce99077a7baf729c991/images/histogram.png)
 
 ## Dark Mode
 
