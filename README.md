@@ -19,3 +19,5 @@ Visual insights: churn distribution, ROC curves
 Streamlit
 Scikit-learn, XGBoost, SHAP
 Pandas, NumPy, Matplotlib, Seaborn
+
+![Feature Importance from Logistic Regression](https://github.com/Akshita2711/StartSolutions/blob/0efa5925f39936efb66cec9fcd439a877e16b503/images/Feature%20importance.png)
