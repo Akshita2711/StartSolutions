@@ -35,6 +35,9 @@ from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report, accuracy_score, roc_curve, roc_auc_score
 from sklearn.decomposition import PCA
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import roc_auc_score
+
 
 # ======== 2. Load Dataset ========
 print("\U0001F4E5 Loading dataset...")
@@ -145,13 +148,29 @@ shap_values = explainer(X_test_scaled)
 shap.summary_plot(shap_values, X_test, feature_names=feature_cols)
 
 # ======== 15. Random Forest Classifier ========
-print("🌳 Training Random Forest...")
-rf = RandomForestClassifier(random_state=42)
-rf.fit(X_train, y_train)
-rf_pred = rf.predict(X_test)
-rf_prob = rf.predict_proba(X_test)[:, 1]
+from sklearn.model_selection import GridSearchCV
+
+# Define hyperparameter grid
+params = {
+    'n_estimators': [100, 200],
+    'max_depth': [4, 6, 8],
+    'min_samples_split': [2, 5],
+    'min_samples_leaf': [1, 2]
+}
+
+# Initialize Grid Search
+grid = GridSearchCV(RandomForestClassifier(random_state=42), params, cv=5, scoring='roc_auc')
+grid.fit(X_train, y_train)
+
+# Best model
+rf_best = grid.best_estimator_
+
+# Predict using best model
+rf_pred = rf_best.predict(X_test)
+rf_prob = rf_best.predict_proba(X_test)[:, 1]
 rf_auc = roc_auc_score(y_test, rf_prob)
-print(f"✅ AUC (Random Forest): {rf_auc:.3f}")
+print(f"✅ Tuned AUC (Random Forest): {rf_auc:.3f}")
+
 
 # ======== 16. XGBoost Classifier ========
 print("⚡ Training XGBoost...")
