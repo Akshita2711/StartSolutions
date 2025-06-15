@@ -1,4 +1,4 @@
-#  1. Import Required Libraries ====
+#  1. Import Required Libraries ==
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -248,6 +248,9 @@ import seaborn as sns
 import warnings
 warnings.filterwarnings('ignore')
 
+if "show_compare" not in st.session_state:
+    st.session_state.show_compare = True
+
 # Set pastel seaborn style
 sns.set_style("darkgrid")
 plt.style.use('seaborn-v0_8-dark-palette')
@@ -346,56 +349,62 @@ def preprocess_and_predict(data):
     return predictions, probabilities
 
 # New: Manual user comparison interface
-with st.expander("🔍 Compare Two Customers Manually"):
-    st.markdown("Fill the details for both users to compare their churn risk and suggested engagement strategy.")
-    user_inputs = []
-    for i in range(2):
-        st.markdown(f"*User {i+1}*")
-        inputs = {}
-        for col in feature_cols:
-            if col in ['tenure', 'MonthlyCharges', 'TotalCharges']:
-                inputs[col] = st.number_input(f"{col} (User {i+1})", key=f"{col}_{i}")
+if st.session_state.show_compare:
+    with st.expander("🔍 Compare Two Customers Manually"):
+        st.markdown("Fill the details for both users to compare their churn risk and suggested engagement strategy.")
+        
+        user_inputs = []
+        for i in range(2):
+            st.markdown(f"*User {i+1}*")
+            inputs = {}
+            for col in feature_cols:
+                if col in ['tenure', 'MonthlyCharges', 'TotalCharges']:
+                    inputs[col] = st.number_input(f"{col} (User {i+1})", key=f"{col}_{i}")
+                else:
+                    options = ['Yes', 'No'] if col not in ['gender', 'Contract', 'InternetService', 'PaymentMethod'] else []
+                    if col == 'gender':
+                        options = ['Male', 'Female']
+                    if col == 'Contract':
+                        options = ['Month-to-month', 'One year', 'Two year']
+                    if col == 'InternetService':
+                        options = ['DSL', 'Fiber optic', 'No']
+                    if col == 'PaymentMethod':
+                        options = ['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)']
+                    inputs[col] = st.selectbox(f"{col} (User {i+1})", options, key=f"{col}_{i}")
+            user_inputs.append(inputs)
+
+        if st.button("🔍 Compare Users"):
+            df_users = pd.DataFrame(user_inputs)
+            for col in feature_cols:
+                if df_users[col].dtype == 'object':
+                    df_users[col] = le.fit_transform(df_users[col])
+            df_users_scaled = scaler.transform(df_users[feature_cols])
+            churn_probs = model.predict_proba(df_users_scaled)[:, 1]
+
+            st.success(f"User 1 churn probability: {churn_probs[0]:.2f}")
+            st.success(f"User 2 churn probability: {churn_probs[1]:.2f}")
+
+            if churn_probs[0] > churn_probs[1]:
+                attention = "User 1 needs more attention."
+            elif churn_probs[1] > churn_probs[0]:
+                attention = "User 2 needs more attention."
             else:
-                options = ['Yes', 'No'] if col not in ['gender', 'Contract', 'InternetService', 'PaymentMethod'] else []
-                if col == 'gender': options = ['Male', 'Female']
-                if col == 'Contract': options = ['Month-to-month', 'One year', 'Two year']
-                if col == 'InternetService': options = ['DSL', 'Fiber optic', 'No']
-                if col == 'PaymentMethod': options = ['Electronic check', 'Mailed check', 'Bank transfer (automatic)', 'Credit card (automatic)']
-                inputs[col] = st.selectbox(f"{col} (User {i+1})", options, key=f"{col}_{i}")
-        user_inputs.append(inputs)
+                attention = "Both users have equal churn risk."
 
-    if st.button("🔍 Compare Users"):
-        df_users = pd.DataFrame(user_inputs)
-        for col in feature_cols:
-            if df_users[col].dtype == 'object':
-                df_users[col] = le.fit_transform(df_users[col])
-        df_users_scaled = scaler.transform(df_users[feature_cols])
-        churn_probs = model.predict_proba(df_users_scaled)[:, 1]
-        st.success(f"User 1 churn probability: {churn_probs[0]:.2f}")
-        st.success(f"User 2 churn probability: {churn_probs[1]:.2f}")
+            st.markdown(f"### 🔔 {attention}")
 
-        if churn_probs[0] > churn_probs[1]:
-            attention = "User 1 needs more attention."
-        elif churn_probs[1] > churn_probs[0]:
-            attention = "User 2 needs more attention."
-        else:
-            attention = "Both users have equal churn risk."
+            def action(prob):
+                if prob > 0.9:
+                    return "📝 Send feedback form"
+                elif prob > 0.75:
+                    return "💸 Offer cashback or discount"
+                elif prob > 0.5:
+                    return "🎁 Provide loyalty reward"
+                else:
+                    return "✅ Maintain current engagement"
 
-        st.markdown(f"### 🔔 {attention}")
-
-        def action(prob):
-            if prob > 0.9:
-                return "📝 Send feedback form"
-            elif prob > 0.75:
-                return "💸 Offer cashback or discount"
-            elif prob > 0.5:
-                return "🎁 Provide loyalty reward"
-            else:
-                return "✅ Maintain current engagement"
-
-        st.markdown(f"*Suggested Plan for User 1:* {action(churn_probs[0])}")
-        st.markdown(f"*Suggested Plan for User 2:* {action(churn_probs[1])}")
-
+            st.markdown(f"*Suggested Plan for User 1:* {action(churn_probs[0])}")
+            st.markdown(f"*Suggested Plan for User 2:* {action(churn_probs[1])}")
 # Main UI
 if uploaded_file:
     st.subheader("🔍 Uploaded Data Preview")
@@ -403,6 +412,7 @@ if uploaded_file:
     st.dataframe(test_df.head(), use_container_width=True)
 
     if st.button("📈 Predict Churn"):
+        st.session_state.show_compare = False
         preds, probs = preprocess_and_predict(test_df)
         output_df = test_df.copy()
         output_df["Churn Prediction"] = preds
