@@ -7,6 +7,7 @@
 # 🚀 Features:
 ## Upload your own CSV file or Just Manualy Compare two users
 ### ![upload](https://github.com/Akshita2711/StartSolutions/blob/be2c82a1d00ef849f870f18cc1efb568214b3b3e/images/uplaod.png)
+### ![compare](https://github.com/Akshita2711/StartSolutions/blob/3fd5baff7b3dd95e464c90fc2a71cd9ac67e8f51/images/compare.png)
 
 ## Data overview
 ### ![Data overview](https://github.com/Akshita2711/StartSolutions/blob/be2d234b6ad18837fcf6ba5d217142a4bf7a6d70/images/data%20overview.png)
