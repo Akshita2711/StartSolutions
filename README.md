@@ -14,6 +14,7 @@
 
 ## Prediction Results 
 ### ![Prediction](https://github.com/Akshita2711/StartSolutions/blob/be2d234b6ad18837fcf6ba5d217142a4bf7a6d70/images/Prediction.png)
+### ![pie](https://github.com/Akshita2711/StartSolutions/blob/b6316f67481551deb2a480f18bfa18c00be3092a/images/pie.png)
 
 ## Smart suggestions for customer retention
 ### ![Suggestion](https://github.com/Akshita2711/StartSolutions/blob/be2d234b6ad18837fcf6ba5d217142a4bf7a6d70/images/suggestions.png)
