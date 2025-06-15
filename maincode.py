@@ -498,10 +498,10 @@ if uploaded_file:
 
         # Plot pie chart
         fig1, ax1 = plt.subplots()
-        fig1, ax1 = plt.subplots(figsize=(3.5, 3.5))  # was maybe 6x6 or 8x8 before
+        fig1, ax1 = plt.subplots(figsize=(2.5, 2.5))  # was maybe 6x6 or 8x8 before
         wedges, texts, autotexts = ax1.pie(
         sizes, labels=labels, autopct="%1.1f%%", startangle=90, colors=colors,
-         textprops={'fontsize': 10}
+         textprops={'fontsize': 9}
         )
         ax1.axis("equal")  # Equal aspect ratio makes it a circle.
         st.subheader("📊 Overall Churn Prediction Summary")
