@@ -6,6 +6,10 @@ import shap
 import warnings
 warnings.filterwarnings("ignore")
 import seaborn as sns
+import openai
+import streamlit as st
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+
 
 # Set dark pasteltheme
 plt.style.use('dark_background')
@@ -258,6 +262,12 @@ plt.style.use('seaborn-v0_8-dark-palette')
 # Page config
 st.set_page_config(page_title="Customer Churn Prediction", layout="wide")
 
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = [
+        {"role": "system", "content": "You are a helpful assistant for customer churn prediction and retention strategy."}
+    ]
+
+
 # Title with icon
 st.markdown(
     "<h1 style='text-align: center; color: #7a5195;'>📊 Customer Churn Prediction Dashboard</h1><br>",
@@ -471,3 +481,65 @@ if uploaded_file:
 
 else:
     st.info("📂 Please upload a test CSV file from the sidebar to start.")
+
+# Floating Chat Button UI
+st.markdown("""
+    <style>
+    #chat-toggle {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 60px;
+        height: 60px;
+        background-color: #7a5195;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 30px;
+        cursor: pointer;
+        z-index: 9999;
+    }
+    #chat-box {
+        display: none;
+        position: fixed;
+        bottom: 100px;
+        right: 25px;
+        width: 350px;
+        max-height: 500px;
+        background-color: #1e1e1e;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 15px;
+        overflow-y: auto;
+        z-index: 9998;
+    }
+    </style>
+
+    <button id="chat-toggle">💬</button>
+    <div id="chat-box">
+        <h4 style="color:white;">🤖 Ask ChurnBot</h4>
+        <div id="chat-history" style="color:white; font-size: 14px; max-height: 300px; overflow-y: auto;"></div>
+        <input type="text" id="user-msg" placeholder="Ask a question..." style="width: 100%; padding: 8px; border-radius: 5px; margin-top: 10px;">
+    </div>
+
+    <script>
+    const toggle = document.getElementById('chat-toggle');
+    const box = document.getElementById('chat-box');
+    toggle.onclick = () => {
+        box.style.display = box.style.display === 'block' ? 'none' : 'block';
+    };
+    </script>
+""", unsafe_allow_html=True)
+
+user_input = st.text_input("💬 Chat with ChurnBot", key="chat_input")
+
+if user_input:
+    st.session_state.chat_history.append({"role": "user", "content": user_input})
+    with st.spinner("ChurnBot is thinking..."):
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=st.session_state.chat_history
+        )
+        reply = response["choices"][0]["message"]["content"]
+        st.session_state.chat_history.append({"role": "assistant", "content": reply})
+        st.markdown(f"**ChurnBot:** {reply}")
