@@ -22,7 +22,6 @@
 
 ## Mobile Optimization
 ### ![mobile1](https://github.com/Akshita2711/StartSolutions/blob/fb48c45a9ababa52fbdb0e256163e04468367a06/images/mobile1.jpg)
-### ![mobile2](https://github.com/Akshita2711/StartSolutions/blob/fb48c45a9ababa52fbdb0e256163e04468367a06/images/mobile1.jpg)
 
 ## Dark Mode
 
