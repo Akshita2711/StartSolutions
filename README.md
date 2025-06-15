@@ -21,11 +21,11 @@
 ## Churn Probability Histogram
 ### ![histogram](https://github.com/Akshita2711/StartSolutions/blob/fb48c45a9ababa52fbdb0e256163e04468367a06/images/histogram.png)
 
+## Dark Mode
+### ![dark](https://github.com/Akshita2711/StartSolutions/blob/5e0abaa12dc4adae43133be7535fe74abf9a8b76/images/darkmode.jpg)
+
 ## Mobile Optimization
 ### ![mobile1](https://github.com/Akshita2711/StartSolutions/blob/fb48c45a9ababa52fbdb0e256163e04468367a06/images/mobile1.jpg)
-
-## Dark Mode
-
 
 # 🛠 Tech Stack
 
