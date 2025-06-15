@@ -480,10 +480,30 @@ if uploaded_file:
         st.subheader("✅ Prediction Results")
         result_cols = ["customerID", "Churn Prediction", "Churn Probability"] if "customerID" in test_df.columns else ["Churn Prediction", "Churn Probability"]
         st.dataframe(output_df[result_cols], use_container_width=True)
+        preds, probs = preprocess_and_predict(test_df)
+        output_df = test_df.copy()
+        output_df["Churn Prediction"] = preds
+        output_df["Churn Probability"] = probs
 
 
         st.subheader("🎯 Smart Re-engagement Suggestions")
         required_cols = ["Churn Probability", "tenure", "MonthlyCharges"]
+        churn_counts = output_df["Churn Prediction"].value_counts()
+        labels = ["Not Churned", "Churned"]
+        sizes = [
+            churn_counts.get(0, 0),
+            churn_counts.get(1, 0)
+        ]
+        colors = ["#66c2a5", "#fc8d62"]
+
+        # Plot pie chart
+        fig1, ax1 = plt.subplots()
+        ax1.pie(sizes, labels=labels, autopct="%1.1f%%", startangle=90, colors=colors)
+        ax1.axis("equal")  # Equal aspect ratio makes it a circle.
+        st.subheader("📊 Overall Churn Prediction Summary")
+        st.pyplot(fig1)
+        st.markdown(f"**🧮 Total Customers:** {len(output_df)}")
+        st.markdown(f"**⚠️ Customers Likely to Churn:** {churn_counts.get(1, 0)}")
 
 
         if all(col in output_df.columns for col in required_cols):
