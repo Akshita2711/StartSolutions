@@ -484,9 +484,7 @@ if uploaded_file:
         output_df = test_df.copy()
         output_df["Churn Prediction"] = preds
         output_df["Churn Probability"] = probs
-
-
-        st.subheader("🎯 Smart Re-engagement Suggestions")
+        
         required_cols = ["Churn Probability", "tenure", "MonthlyCharges"]
         churn_counts = output_df["Churn Prediction"].value_counts()
         labels = ["Not Churned", "Churned"]
@@ -509,7 +507,7 @@ if uploaded_file:
         st.markdown(f"**🧮 Total Customers:** {len(output_df)}")
         st.markdown(f"**⚠️ Customers Likely to Churn:** {churn_counts.get(1, 0)}")
 
-
+        st.subheader("🎯 Smart Re-engagement Suggestions")
         if all(col in output_df.columns for col in required_cols):
             risky_df = output_df.sort_values("Churn Probability", ascending=False).head(10).copy()
             def suggest_action(row):
