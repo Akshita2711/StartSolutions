@@ -18,7 +18,11 @@
 ### ![Suggestion](https://github.com/Akshita2711/StartSolutions/blob/be2d234b6ad18837fcf6ba5d217142a4bf7a6d70/images/suggestions.png)
 
 ## Churn Probability Histogram
-###
+### ![histogram](https://github.com/Akshita2711/StartSolutions/blob/fb48c45a9ababa52fbdb0e256163e04468367a06/images/histogram.png)
+
+## Mobile Optimization
+### ![mobile1](https://github.com/Akshita2711/StartSolutions/blob/fb48c45a9ababa52fbdb0e256163e04468367a06/images/mobile1.jpg)
+### ![mobile2](https://github.com/Akshita2711/StartSolutions/blob/fb48c45a9ababa52fbdb0e256163e04468367a06/images/mobile1.jpg)
 
 ## Dark Mode
 
